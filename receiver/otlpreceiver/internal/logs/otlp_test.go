@@ -30,7 +30,7 @@ func TestExport(t *testing.T) {
 	logSink := new(consumertest.LogsSink)
 	logClient := makeLogsServiceClient(t, logSink)
 	resp, err := logClient.Export(context.Background(), req)
-	require.NoError(t, err, "Failed to export trace: %v", err)
+	require.NoError(t, err, "Failed to export log: %v", err)
 	require.NotNil(t, resp, "The response is missing")
 
 	lds := logSink.AllLogs()
@@ -43,7 +43,7 @@ func TestExport_EmptyRequest(t *testing.T) {
 
 	logClient := makeLogsServiceClient(t, logSink)
 	resp, err := logClient.Export(context.Background(), plogotlp.NewExportRequest())
-	assert.NoError(t, err, "Failed to export trace: %v", err)
+	assert.NoError(t, err, "Failed to export log: %v", err)
 	assert.NotNil(t, resp, "The response is missing")
 }
 
@@ -60,7 +60,7 @@ func TestExport_ErrorConsumer(t *testing.T) {
 func makeLogsServiceClient(t *testing.T, lc consumer.Logs) plogotlp.GRPCClient {
 	addr := otlpReceiverOnGRPCServer(t, lc)
 	cc, err := grpc.Dial(addr.String(), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
-	require.NoError(t, err, "Failed to create the TraceServiceClient: %v", err)
+	require.NoError(t, err, "Failed to create the LogsServiceClient: %v", err)
 	t.Cleanup(func() {
 		require.NoError(t, cc.Close())
 	})
